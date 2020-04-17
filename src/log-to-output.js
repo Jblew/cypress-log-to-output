@@ -94,7 +94,18 @@ function logConsole(params) {
 
   const prefix = `[${new Date(timestamp).toISOString()}] ${icon} `;
 
-  log(color(`${prefix}${chalk.bold(`console.${type}`)} called`), ...args);
+  log(
+    color(`${prefix}${chalk.bold(`console.${type}`)} called`),
+    ...args.map(preprocessConsoleArg).map((item) => color(item + ""))
+  );
+}
+
+function preprocessConsoleArg(arg) {
+  if (arg && arg.type === "string") return arg.value;
+  if (arg && arg.type === "object" && arg.subtype === "error") {
+    return arg.description;
+  }
+  return arg;
 }
 
 function install(on, filter) {
